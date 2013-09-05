@@ -102,9 +102,14 @@ def normalise_plan(plan):
     return sorted(Table(sorted(table)) for table in plan)
 
 
+def empty(table):
+    return all(p is None for p in table)
+
 ### People who are coming, and information about connections
 
 MAX_CONNECTION = 50
+
+CONSERVE_TABLE_COEFFICIENT = 50
 
 class PlanningData(object):
     def __init__(self, names, connections, table_size, table_count):
@@ -144,6 +149,13 @@ class PlanningData(object):
             for j in range(0, self.PEOPLE_COUNT - 1)
             for k in range(j, self.PEOPLE_COUNT)
             )
+
+
+        # Better score if fewer tables used (for more friendliness even with
+        # strangers). If table_size and table_count are chosen better this
+        # isn't necessary.
+        val += len([t for t in plan if empty(t)]) * CONSERVE_TABLE_COEFFICIENT * self.PEOPLE_COUNT
+
         # Negative, because annealing module finds minimum
         return self.MAX_ENERGY - val
 
@@ -164,7 +176,7 @@ def solve(names, connections, table_size, table_count):
                                schedule['steps'], updates=6)
 
     # Remove empty tables:
-    state = [t for t in state if any(p is not None for p in t)]
+    state = [t for t in state if not empty(t)]
     return planning_data, state
 
 
