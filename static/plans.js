@@ -1,20 +1,38 @@
 $(document).ready(function () {
 
+    function addRow($tbl, text) {
+        $row = $("<tr><td></td></tr>").find("td").text(text).end();
+        $tbl.find("tbody").append($row);
+    }
+
+    function finishedLoading () {
+        $("#loading").hide();
+    }
+
     function showSolution (solutionData) {
+        finishedLoading();
+
         if (solutionData.solution != undefined) {
             var data = solutionData.solution;
+            var $tbl = $("<table class='plan'><thead><tr><th>Plan</th></tr></thead><tbody></tbody><tfoot><tr><td><a class='remove-plan' href='#'>Remove</a></td></tr></tfoot></table>");
             for (i in data) {
-                console.log("Table:")
                 var row = data[i];
                 for (j in row) {
-                    console.log(row[j]);
+                    addRow($tbl, row[j]);
                 }
-                console.log("");
+                if (i < data.length - 1) {
+                    addRow($tbl, "-");
+                }
             }
+            $("#plans").append($("<td></td>").append($tbl));
         }
     }
 
     $("#find-solution").click(function() {
+        if (connectionsMatrix == undefined) {
+            return;
+        }
+
         var tableSize = $('#table-size').val();
         if (! tableSize.match(/^\d+$/)) {
             alert("Please enter an integer for table size");
@@ -27,6 +45,7 @@ $(document).ready(function () {
             return;
         }
 
+        $("#loading").show();
         $.ajax({
             url: $SCRIPT_ROOT + "/find-solution/",
             dataType: 'json',
@@ -35,9 +54,15 @@ $(document).ready(function () {
                 connections: getRawConnectionsData(),
                 tableSize: tableSize
             },
-            success: showSolution
+            success: showSolution,
+            error: finishedLoading
         });
 
+    });
+
+    $("#plans").on("click", ".remove-plan", function (ev) {
+        ev.preventDefault();
+        $(ev.target).closest("table").remove();
     });
 
 });

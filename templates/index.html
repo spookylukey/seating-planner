@@ -65,9 +65,15 @@
 
     <h2>Plans</h2>
 
-    <p><input type="submit" id="find-solution" value="Find solution"></p>
+    <p><input type="submit" id="find-solution" value="Find solution">
+      <img id="loading" src="{{ url_for('static', filename='loading.gif') }}" style="display: none;">
+    </p>
 
-    <div id="plans">
+    <div class="plans-container">
+      <table>
+        <tr id="plans">
+        </tr>
+      </table>
     </div>
 
 
