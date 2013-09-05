@@ -1,9 +1,47 @@
+var connectionsMatrix;
+
+
+function getRawConnectionsData () {
+    var data = connectionsMatrix.getData();
+    var connections = [];
+    for (i in data) {
+        var row = data[i];
+        for (j in row) {
+            var d = row[j];
+            connections.push(d);
+            if (j < row.length - 1) {
+                connections.push(",")
+            }
+        }
+        connections.push("\n");
+    }
+    return connections.join("");
+}
+
+function updateMatrixFromRaw () {
+    var raw = $("#connections-raw").val();
+    var rows = raw.trim().split(/\n/);
+    var m = [];
+    for (i in rows) {
+        l = [];
+        parts = rows[i].split(/,/);
+        for (j in parts) {
+            l.push(parts[j])
+        }
+        m.push(l);
+    }
+    $("#connections-matrix-controls").show();
+    $("#connections-raw-controls").hide();
+    connectionsMatrix.loadData(m);
+    return true;
+}
+
 $(document).ready(function () {
 
     var $tbl = $("#connections");
 
     function mirrorChange(x, y, val) {
-        ht.setDataAtCell(y, x, val, "mirrorChange");
+        connectionsMatrix.setDataAtCell(y, x, val, "mirrorChange");
     }
 
     function afterChange (changes, source) {
@@ -34,11 +72,17 @@ $(document).ready(function () {
         contextMenu: false
     });
 
-    var ht = $tbl.data('handsontable');
+    connectionsMatrix = $tbl.data('handsontable');
 
     function addNamesToConnections (names) {
-        var existingData = ht.getData();
+        var existingData = connectionsMatrix.getData();
         var newNames = names.slice();
+        for (i in newNames) {
+            if (newNames[i].match(/,/)) {
+                alert("Names must not contain the comma character");
+                return;
+            }
+        }
         for (i in newNames) {
             var newName = newNames[i];
 
@@ -65,12 +109,27 @@ $(document).ready(function () {
             var idx = existingData.length - 1;
             existingData[idx][idx] = "0";
         }
-        ht.loadData(existingData);
+        connectionsMatrix.loadData(existingData);
     };
 
-    $("#update-connections").click(function (ev) {
+    $("#add-names").click(function (ev) {
         var names = $("#names").val().trim().split(/\n/);
         addNamesToConnections(names);
+    });
+
+    $("#show-raw-connections").click(function () {
+        $("#connections-matrix-controls").hide();
+        $("#connections-raw").val(getRawConnectionsData());
+        $("#connections-raw-controls").show();
+    });
+
+    $("#hide-raw-connections").click(function () {
+        $("#connections-matrix-controls").show();
+        $("#connections-raw-controls").hide();
+    });
+
+    $("#update-matrix").click(function () {
+        updateMatrixFromRaw();
     });
 
 });

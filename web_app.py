@@ -24,7 +24,7 @@ def find_solution():
     rows = connections.strip("\n").split("\n")
     d = []
     for row in rows:
-        d.append(row.split(",")[:-1])
+        d.append(row.split(","))
 
     # Manipulate into stuff we need:
 
