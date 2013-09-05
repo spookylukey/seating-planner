@@ -7,7 +7,6 @@ $(document).ready(function () {
     }
 
     function afterChange (changes, source) {
-        console.log(source);
         if (source == "edit" || source == "autofill") {
             for (i in changes) {
                 var change = changes[i];
@@ -64,7 +63,7 @@ $(document).ready(function () {
                 }
             }
             var idx = existingData.length - 1;
-            existingData[idx][idx] = "1";
+            existingData[idx][idx] = "0";
         }
         ht.loadData(existingData);
     };

@@ -5,7 +5,11 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="//handsontable.com/dist/jquery.handsontable.full.js"></script>
     <link rel="stylesheet" media="screen" href="//handsontable.com/dist/jquery.handsontable.full.css">
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
     <script src="{{ url_for('static', filename='connections.js') }}"></script>
+    <script src="{{ url_for('static', filename='plans.js') }}"></script>
     <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='style.css') }}">
   <body>
     <h1>Seating planner</h1>
@@ -38,9 +42,14 @@
 
     <h2>Parameters</h2>
 
-    <p>Table size</p>
+    <p><label>Table size <input type="text" id="table-size" value="5"></label></p>
 
     <h2>Plans</h2>
+
+    <p><input type="submit" id="find-solution" value="Find solution"></p>
+
+    <div id="plans"></div>
+
 
   </body>
 </html>
