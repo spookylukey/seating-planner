@@ -25,6 +25,8 @@ $(document).ready(function () {
                 }
             }
             $("#plans").append($("<td></td>").append($tbl));
+        } else if (solutionData.error != undefined) {
+            alert(solutionData.error);
         }
     }
 

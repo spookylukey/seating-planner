@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import json
-
 from flask import Flask, jsonify, render_template, request
 
 from seating_planner import solve, normalise_plan
@@ -14,6 +12,9 @@ app.config.from_object(__name__)
 def index():
     return render_template('index.html')
 
+
+def error(message):
+    return jsonify({'error': message})
 
 @app.route('/find-solution/', methods=['POST'])
 def find_solution():
@@ -38,7 +39,22 @@ def find_solution():
         row.pop(0)
 
     # Convert to ints
-    matrix = [map(int, row) for row in d]
+    matrix = []
+    for r, row in enumerate(d):
+        line = []
+        for c, item in enumerate(row):
+            item = item.strip()
+            if item == "":
+                item = 0
+            else:
+                try:
+                    item = int(item)
+                except ValueError:
+                    return error("Data at row %s, column %s is not an integer"
+                                 % (r + 1, c + 1))
+
+            line.append(item)
+        matrix.append(line)
 
     # Solve
     planning_data, plan = solve(names, matrix, table_size)
