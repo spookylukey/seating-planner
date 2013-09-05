@@ -10,7 +10,7 @@ from __future__ import division
 import math
 import random
 
-import anneal
+from anneal import Annealer
 
 connection_matrix = """
 1 50 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0
@@ -133,18 +133,18 @@ class PlanningData(object):
 
 
 
-example = PlanningData(
-    EXAMPLE_NAMES,
-    EXAMPLE_CONNECTIONS,
-    4,
-)
-state = example.get_initial_plan()
+def solve(names, connections, table_size):
+    planning_data = PlanningData(names, connections, table_size)
+    state = planning_data.get_initial_plan()
+    annealer = Annealer(planning_data.energy, move)
+    schedule = annealer.auto(state, minutes=0.1, steps=100)
+    state, e = annealer.anneal(state,
+                               schedule['tmax'], schedule['tmin'],
+                               schedule['steps'], updates=6)
 
-from anneal import Annealer
-annealer = Annealer(example.energy, move)
-schedule = annealer.auto(state, minutes=0.1, steps=100)
-state, e = annealer.anneal(state,
-                           schedule['tmax'], schedule['tmin'],
-                           schedule['steps'], updates=6)
+    return planning_data, state
 
-print normalise_plan(example.plan_to_names(state))
+
+if __name__ == '__main__':
+    planning_data, plan = solve(EXAMPLE_NAMES, EXAMPLE_CONNECTIONS, 9)
+    print normalise_plan(planning_data.plan_to_names(plan))
