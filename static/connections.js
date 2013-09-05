@@ -51,8 +51,6 @@ $(document).ready(function () {
                 mirrorChange(change[0], change[1], change[3]);
             }
         }
-        console.log(changes);
-        console.log(source);
     }
 
     $tbl.handsontable({
