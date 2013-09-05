@@ -22,6 +22,7 @@ def find_solution():
     # Parse data:
     connections = request.form.get('connections', "")
     table_size = request.form.get('tableSize', 0, type=int)
+    table_count = request.form.get('tableCount', 0, type=int)
     rows = connections.strip("\n").split("\n")
     d = []
     for row in rows:
@@ -57,7 +58,7 @@ def find_solution():
         matrix.append(line)
 
     # Solve
-    planning_data, plan = solve(names, matrix, table_size)
+    planning_data, plan = solve(names, matrix, table_size, table_count)
 
     return jsonify({'solution': normalise_plan(planning_data.plan_to_names(plan))})
 

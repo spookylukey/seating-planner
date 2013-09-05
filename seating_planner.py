@@ -82,8 +82,17 @@ def move(plan):
     plan.remove(t2)
     p1 = random.choice(t1)
     p2 = random.choice(t2)
-    t1 = Table(p for p in t1 if p != p1) + Table([p2])
-    t2 = Table(p for p in t2 if p != p2) + Table([p1])
+
+    t1 = list(t1)
+    t1.remove(p1)
+    t1.append(p2)
+    t1 = Table(t1)
+
+    t2 = list(t2)
+    t2.remove(p2)
+    t2.append(p1)
+    t2 = Table(t2)
+
     plan.append(t1)
     plan.append(t2)
     return plan
@@ -98,7 +107,7 @@ def normalise_plan(plan):
 MAX_CONNECTION = 50
 
 class PlanningData(object):
-    def __init__(self, names, connections, table_size):
+    def __init__(self, names, connections, table_size, table_count):
         self.NAMES = names
         self.CONNECTIONS = connections
         for row in connections:
@@ -107,7 +116,7 @@ class PlanningData(object):
 
         self.TABLE_SIZE = table_size
         self.PEOPLE_COUNT = len(names)
-        self.TABLE_COUNT = int(math.ceil(self.PEOPLE_COUNT/self.TABLE_SIZE))
+        self.TABLE_COUNT = table_count
         # Just need a value that is big enough to keep energy always positive
         self.MAX_ENERGY = MAX_CONNECTION * self.TABLE_COUNT * self.PEOPLE_COUNT**2
 
@@ -115,7 +124,18 @@ class PlanningData(object):
     def get_initial_plan(self):
         people = range(0, self.PEOPLE_COUNT)
         random.shuffle(people)
-        return Plan(Table(people[i::self.TABLE_COUNT]) for i in range(self.TABLE_COUNT))
+
+        # We need extra items, to represent spare places.  This allows us the
+        # flexibility to have different sized tables.  To avoid fruitless
+        # searches, we put them at the end *after* shuffling, and group such
+        # that we get empty tables at the end.
+        total_places = self.TABLE_SIZE * self.TABLE_COUNT
+
+        people.extend([None] * (total_places - len(people)))
+
+        s = self.TABLE_SIZE
+        c = self.TABLE_COUNT
+        return Plan(Table(people[i*s:(i+1)*s]) for i in range(c))
 
     def energy(self, plan):
         val = sum(
@@ -128,13 +148,14 @@ class PlanningData(object):
         return self.MAX_ENERGY - val
 
     def plan_to_names(self, plan):
-        return Plan(Table(self.NAMES[p] for p in table)
+        return Plan(Table(self.NAMES[p] for p in table
+                          if p is not None)
                     for table in plan)
 
 
 
-def solve(names, connections, table_size):
-    planning_data = PlanningData(names, connections, table_size)
+def solve(names, connections, table_size, table_count):
+    planning_data = PlanningData(names, connections, table_size, table_count)
     state = planning_data.get_initial_plan()
     annealer = Annealer(planning_data.energy, move)
     schedule = annealer.auto(state, minutes=0.1, steps=100)
@@ -142,9 +163,11 @@ def solve(names, connections, table_size):
                                schedule['tmax'], schedule['tmin'],
                                schedule['steps'], updates=6)
 
+    # Remove empty tables:
+    state = [t for t in state if any(p is not None for p in t)]
     return planning_data, state
 
 
 if __name__ == '__main__':
-    planning_data, plan = solve(EXAMPLE_NAMES, EXAMPLE_CONNECTIONS, 9)
+    planning_data, plan = solve(EXAMPLE_NAMES, EXAMPLE_CONNECTIONS, 9, 2)
     print normalise_plan(planning_data.plan_to_names(plan))

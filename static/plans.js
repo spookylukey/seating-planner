@@ -41,9 +41,22 @@ $(document).ready(function () {
             return;
         }
         tableSize = parseInt(tableSize, 10);
+
         var nameCount = connectionsMatrix.getData().length - 1;
         if (tableSize >= nameCount) {
             alert("Tables must be smaller than the number of people");
+            return;
+        }
+
+        var tableCount = $('#table-count').val();
+        if (! tableCount.match(/^\d+$/)) {
+            alert("Please enter an integer for number of tables");
+            return;
+        }
+        tableCount = parseInt(tableCount, 10);
+
+        if (tableCount * tableSize < nameCount) {
+            alert("You just don't have enough tables. This is never going to work...");
             return;
         }
 
@@ -54,6 +67,7 @@ $(document).ready(function () {
             type: 'POST',
             data: {
                 connections: getRawConnectionsData(),
+                tableCount: tableCount,
                 tableSize: tableSize
             },
             success: showSolution,
