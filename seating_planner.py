@@ -31,9 +31,9 @@ connection_matrix = """
 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1
 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1
 """
-MATRIX_DATA = [map(int, l.strip().split(" ")) for l in connection_matrix.strip().split("\n")]
+EXAMPLE_CONNECTIONS = [map(int, l.strip().split(" ")) for l in connection_matrix.strip().split("\n")]
 
-NAMES = """
+EXAMPLE_NAMES = """
 Deb
 John
 Martha
@@ -51,15 +51,10 @@ Colin
 Shirley
 DeAnn
 Lori
-"""
+""".strip().split("\n")
 
-NAMES = NAMES.strip().split("\n")
 
-TABLE_SIZE = 9
-
-PEOPLE_COUNT = len(NAMES)
-
-TABLE_COUNT = int(math.ceil(PEOPLE_COUNT/TABLE_SIZE))
+#### Plans and Tables ####
 
 # A Plan is a list of Tables.
 # A Table is a tuple of integers representing people
@@ -71,40 +66,11 @@ TABLE_COUNT = int(math.ceil(PEOPLE_COUNT/TABLE_SIZE))
 Table = tuple
 Plan = list
 
-def normalise_plan(plan):
-    return sorted(Table(sorted(table)) for table in plan)
-
-def get_initial_plan():
-    people = range(0, PEOPLE_COUNT)
-    random.shuffle(people)
-    return Plan(Table(people[i::TABLE_COUNT]) for i in range(TABLE_COUNT))
-
-def plan_to_names(plan):
-    return Plan(Table(NAMES[p] for p in table)
-                for table in plan)
-
-
-def connection(j, k):
-    return MATRIX_DATA[j][k]
 
 def seated_together(plan, table_num, j, k):
     t = plan[table_num]
     return int(j in t and k in t)
 
-
-MAX_CONNECTION = 50
-# Just need a value that is big enough to keep energy always positive
-MAX_ENERGY = MAX_CONNECTION * TABLE_COUNT * PEOPLE_COUNT**2
-
-def energy(plan):
-    val = sum(
-        connection(j, k) * seated_together(plan, table_num, j, k)
-        for table_num in range(0, TABLE_COUNT)
-        for j in range(0, PEOPLE_COUNT - 1)
-        for k in range(j, PEOPLE_COUNT)
-        )
-    # Negative, because annealing module finds minimum
-    return MAX_ENERGY - val
 
 def move(plan):
     # This modifies the plan in place.
@@ -122,13 +88,63 @@ def move(plan):
     plan.append(t2)
     return plan
 
-state = get_initial_plan()
+
+def normalise_plan(plan):
+    return sorted(Table(sorted(table)) for table in plan)
+
+
+### People who are coming, and information about connections
+
+MAX_CONNECTION = 50
+
+class PlanningData(object):
+    def __init__(self, names, connections, table_size):
+        self.NAMES = names
+        self.CONNECTIONS = connections
+        for row in connections:
+            for col in row:
+                assert col <= MAX_CONNECTION
+
+        self.TABLE_SIZE = table_size
+        self.PEOPLE_COUNT = len(names)
+        self.TABLE_COUNT = int(math.ceil(self.PEOPLE_COUNT/self.TABLE_SIZE))
+        # Just need a value that is big enough to keep energy always positive
+        self.MAX_ENERGY = MAX_CONNECTION * self.TABLE_COUNT * self.PEOPLE_COUNT**2
+
+
+    def get_initial_plan(self):
+        people = range(0, self.PEOPLE_COUNT)
+        random.shuffle(people)
+        return Plan(Table(people[i::self.TABLE_COUNT]) for i in range(self.TABLE_COUNT))
+
+    def energy(self, plan):
+        val = sum(
+            self.CONNECTIONS[j][k] * seated_together(plan, table_num, j, k)
+            for table_num in range(0, self.TABLE_COUNT)
+            for j in range(0, self.PEOPLE_COUNT - 1)
+            for k in range(j, self.PEOPLE_COUNT)
+            )
+        # Negative, because annealing module finds minimum
+        return self.MAX_ENERGY - val
+
+    def plan_to_names(self, plan):
+        return Plan(Table(self.NAMES[p] for p in table)
+                    for table in plan)
+
+
+
+example = PlanningData(
+    EXAMPLE_NAMES,
+    EXAMPLE_CONNECTIONS,
+    4,
+)
+state = example.get_initial_plan()
 
 from anneal import Annealer
-annealer = Annealer(energy, move)
-schedule = annealer.auto(state, minutes=0.1)
+annealer = Annealer(example.energy, move)
+schedule = annealer.auto(state, minutes=0.1, steps=100)
 state, e = annealer.anneal(state,
                            schedule['tmax'], schedule['tmin'],
                            schedule['steps'], updates=6)
 
-print normalise_plan(plan_to_names(state))
+print normalise_plan(example.plan_to_names(state))
