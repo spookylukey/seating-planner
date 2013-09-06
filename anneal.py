@@ -176,13 +176,13 @@ class Annealer:
         # Return best state and energy
         return bestState, bestEnergy
     
-    def auto(self, state, minutes, steps=2000):
+    def auto(self, state, seconds, steps=2000):
         """Minimizes the energy of a system by simulated annealing with
         automatic selection of the temperature schedule.
         
         Keyword arguments:
         state -- an initial arrangement of the system
-        minutes -- time to spend annealing (after exploring temperatures)
+        seconds -- time to spend annealing (after exploring temperatures)
         steps -- number of steps to spend on each stage of exploration
         
         Returns the best state and energy found."""
@@ -259,7 +259,7 @@ class Annealer:
         
         # Calculate anneal duration
         elapsed = time.time() - start
-        duration = round_figures(int(60.0 * minutes * step / elapsed), 2)
+        duration = round_figures(int(seconds * step / elapsed), 2)
         
         # MP: Don't perform anneal, just return params
         #return self.anneal(state, Tmax, Tmin, duration, 20)

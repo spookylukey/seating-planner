@@ -179,7 +179,7 @@ def solve(names, connections, table_size, table_count,
     planning_data = PlanningData(names, connections, table_size, table_count)
     state = planning_data.get_initial_plan()
     annealer = Annealer(planning_data.energy, move)
-    schedule = annealer.auto(state, minutes=annealing_time/60.0, steps=exploration_steps)
+    schedule = annealer.auto(state, seconds=annealing_time, steps=exploration_steps)
     state, e = annealer.anneal(state,
                                schedule['tmax'], schedule['tmin'],
                                schedule['steps'], updates=6)
