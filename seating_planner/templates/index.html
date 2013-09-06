@@ -6,11 +6,11 @@
     <script src="//handsontable.com/dist/jquery.handsontable.full.js"></script>
     <link rel="stylesheet" media="screen" href="//handsontable.com/dist/jquery.handsontable.full.css">
     <script type=text/javascript>
-      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }} + "/seating-planner/";
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>
-    <script src="/seating-planner{{ url_for('static', filename='connections.js') }}"></script>
-    <script src="/seating-planner{{ url_for('static', filename='plans.js') }}"></script>
-    <link rel="stylesheet" media="screen" href="/seating-planner{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='connections.js') }}"></script>
+    <script src="{{ url_for('static', filename='plans.js') }}"></script>
+    <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='style.css') }}">
   <body>
     <h1>Seating planner</h1>
 
@@ -25,10 +25,10 @@
       <li>Click a button, and a possible seating plan is generated and displayed.</li>
     </ul>
 
-    <p><strong>Please note: this app does not save any data.</strong>.
+    <p><strong>Please note: this app does not save any data.</strong>
       You must remember to save:</p>
     <ul>
-      <li>The connections matrix</li>
+      <li>The connections matrix.</li>
       <li>Any generated plans that you want to keep. Since random numbers are
       used, there is no guarantee of getting the same plan generated again for
       the same input data.</li>
@@ -137,7 +137,7 @@
     <h2>Plans</h2>
 
     <p><input type="submit" id="find-solution" value="Find solution">
-      <img id="loading" src="/seating-planner{{ url_for('static', filename='loading.gif') }}" style="display: none;">
+      <img id="loading" src="{{ url_for('static', filename='loading.gif') }}" style="display: none;">
     </p>
 
     <p>Plans display groups of people, with the number of other people on their
