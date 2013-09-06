@@ -67,6 +67,13 @@ $(document).ready(function () {
         }
         annealingTime = parseInt(annealingTime, 10);
 
+        var explorationSteps = $('#exploration-steps').val();
+        if (! explorationSteps.match(/^\d+$/)) {
+            alert("Please enter an integer for exploration steps.");
+            return;
+        }
+        explorationSteps = parseInt(explorationSteps, 10);
+
 
         $("#loading").show();
         $.ajax({
@@ -76,6 +83,7 @@ $(document).ready(function () {
             data: {
                 connections: getRawConnectionsData(),
                 annealingTime: annealingTime,
+                explorationSteps: explorationSteps,
                 tableCount: tableCount,
                 tableSize: tableSize
             },
