@@ -37,6 +37,10 @@ Access on localhost:5000
 
 It can be run under PyPy for significant speedups (about 5-10x)
 
+It can de deployed using any WSGI container e.g. gunicorn:
+
+$ gunicorn  -b 127.0.0.1:12345 -D -w 4 seating_planner.web_app:app
+
 
 License
 -------
