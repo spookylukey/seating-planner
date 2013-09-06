@@ -80,7 +80,10 @@ def move(plan):
 
     plan.append(t1)
     plan.append(t2)
-    return plan
+
+    if p1 == -1 and p2 == -1:
+        # We just swapped two empty seats. Try again:
+        move(plan)
 
 
 def normalise_plan(plan):
