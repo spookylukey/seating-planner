@@ -4,7 +4,7 @@ import re
 
 from flask import Flask, jsonify, render_template, request, Response
 
-from seating_planner import solve, normalise_plan
+from seating_planner.solver import solve, normalise_plan
 
 app = Flask(__name__)
 app.config.from_object(__name__)
