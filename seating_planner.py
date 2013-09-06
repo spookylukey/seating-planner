@@ -57,13 +57,9 @@ Lori
 #### Plans and Tables ####
 
 # A Plan is a list of Tables.
-# A Table is a tuple of integers representing people
+# A Table is a list of integers representing people
 
-# We use tuples so that they are immutable, so that copying a whole plan is just
-# shallow copying a list, without having to worry about substructures being
-# modified by other copies.
-
-Table = tuple
+Table = list
 Plan = list
 
 
@@ -83,15 +79,11 @@ def move(plan):
     p1 = random.choice(t1)
     p2 = random.choice(t2)
 
-    t1 = list(t1)
     t1.remove(p1)
     t1.append(p2)
-    t1 = Table(t1)
 
-    t2 = list(t2)
     t2.remove(p2)
     t2.append(p1)
-    t2 = Table(t2)
 
     plan.append(t1)
     plan.append(t2)
