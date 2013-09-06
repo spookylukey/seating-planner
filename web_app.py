@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, Response
 
 from seating_planner import solve, normalise_plan
 
@@ -66,6 +66,20 @@ def find_solution():
                                 )
 
     return jsonify({'solution': normalise_plan(planning_data.plan_to_people(plan))})
+
+
+@app.route('/download-form/')
+def download_form():
+    return render_template('download_iframe.html')
+
+
+@app.route('/download-connections/', methods=['POST'])
+def download_connections():
+    response = Response(mimetype="text/plain",
+                        headers=[("Content-Disposition", "attachment; filename=connections.txt"),
+                                 ])
+    response.set_data(request.form.get('data'))
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)

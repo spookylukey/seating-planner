@@ -272,6 +272,18 @@ $(document).ready(function () {
 
     }
 
+    function downloadConnections () {
+        // Need the download to happen inline, without leaving the page.  We
+        // also need the data to come from the actually page.
+        // So we embed an iframe with a self-submitting form
+        $("#connections-raw").val(getRawConnectionsData());
+        $('#download-container').append('<iframe height="1", width="1" frameborder="0" src="' + $SCRIPT_ROOT + '/download-form/"></iframe>');
+    }
+
+
+
+    // --- Wiring ---
+
     $("#add-names").click(function (ev) {
         var names = $("#names").val().trim().split(/\n/);
         if (addNamesToConnections(names)) {
@@ -299,6 +311,10 @@ $(document).ready(function () {
 
     $("#update-matrix").click(function () {
         updateMatrixFromRaw();
+    });
+
+    $("#download-connections").click(function () {
+        downloadConnections();
     });
 
     function makeGroupUnique (group) {

@@ -59,6 +59,22 @@
 
     <div id="connections-matrix-controls">
       <h3>Matrix <input type="submit" id="show-raw-connections" value="Show raw connections data"></h3>
+
+      <div class="download-form">
+        Download connection data:
+        <input type="submit" id="download-connections" value="Download">
+        <div id="download-container" style="display: none;"></div>
+      </div>
+
+
+      <div class="upload-form">
+        <form id="upload-form">
+          Upload connection data:
+          <input type="file" id="upload-selector">
+          <input type="submit" id="upload-connections" value="Upload">
+        </form>
+      </div>
+
       <p>Using the matrix:</p>
 
       <ul>
