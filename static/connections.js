@@ -18,8 +18,7 @@ function getRawConnectionsData () {
     return connections.join("");
 }
 
-function updateMatrixFromRaw () {
-    var raw = $("#connections-raw").val();
+function updateMatrixFromRaw (raw) {
     var rows = raw.trim().split(/\n/);
     var m = [];
     for (i in rows) {
@@ -278,7 +277,7 @@ $(document).ready(function () {
             alert("There is no data entered yet");
             return;
         }
-        $("#connections-raw").val(getRawConnectionsData());
+        $("#file-data-raw").val(getRawConnectionsData());
         $('#download-container').append('<iframe height="1", width="1" frameborder="0" src="' + $SCRIPT_ROOT + '/download-form/"></iframe>');
     }
 
@@ -293,8 +292,7 @@ $(document).ready(function () {
         xhr.onreadystatechange = function(e) {
             if (this.readyState == 4) {
                 console.log(['xhr upload complete', e]);
-                $("#connections-raw").val(xhr.response);
-                updateMatrixFromRaw();
+                updateMatrixFromRaw(xhr.response);
             }
         };
         xhr.open('post', $SCRIPT_ROOT + "/upload-connections/", true);

@@ -6,12 +6,12 @@
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
   </script>
   <body>
-    <form method="POST" action="{{ url_for('download_connections') }}">
+    <form method="POST" action="{{ url_for('download_file') }}">
       <textarea name="data"></textarea>
     </form>
   </body>
   <script type="text/javascript">
-    var data = $(window.parent.document).find("#connections-raw").val();
+    var data = $(window.parent.document).find("#file-data-raw").val();
     $('textarea').val(data);
     $('form').submit();
   </script>

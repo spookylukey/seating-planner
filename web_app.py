@@ -81,8 +81,8 @@ def download_form():
     return render_template('download_iframe.html')
 
 
-@app.route('/download-connections/', methods=['POST'])
-def download_connections():
+@app.route('/download-file/', methods=['POST'])
+def download_file():
     response = Response(mimetype="text/plain",
                         headers=[("Content-Disposition", "attachment; filename=connections.txt"),
                                  ])
