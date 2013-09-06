@@ -125,6 +125,9 @@ class PlanningData(object):
         # that we get empty tables at the end.
         total_places = self.TABLE_SIZE * self.TABLE_COUNT
 
+        # We use -1 as sentinel indicating an empty place, so that it has the
+        # same type as the rest of the data, rather than None, giving us large
+        # speeds up with a JIT (e.g. PyPy).
         people.extend([-1] * (total_places - len(people)))
 
         s = self.TABLE_SIZE
