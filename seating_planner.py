@@ -99,7 +99,8 @@ def move(plan):
 
 
 def normalise_plan(plan):
-    return sorted(Table(sorted(table)) for table in plan)
+    return sorted((Table(sorted(table, key=lambda p: p['name'])) for table in plan),
+                  key=lambda t: t[0]['name'])
 
 
 def empty(table):
@@ -159,9 +160,14 @@ class PlanningData(object):
         # Negative, because annealing module finds minimum
         return self.MAX_ENERGY - val
 
-    def plan_to_names(self, plan):
-        return Plan(Table(self.NAMES[p] for p in table
-                          if p is not None)
+    def plan_to_people(self, plan):
+        return Plan(Table(
+                dict(name=self.NAMES[p],
+                     friends=sum(1 if self.CONNECTIONS[p][k] > 0 else 0
+                                 for k in table if k != p and k is not None)
+                     )
+                for p in table
+                if p is not None)
                     for table in plan)
 
 
@@ -185,4 +191,4 @@ def solve(names, connections, table_size, table_count,
 
 if __name__ == '__main__':
     planning_data, plan = solve(EXAMPLE_NAMES, EXAMPLE_CONNECTIONS, 9, 2)
-    print normalise_plan(planning_data.plan_to_names(plan))
+    print normalise_plan(planning_data.plan_to_people(plan))

@@ -1,7 +1,9 @@
 $(document).ready(function () {
 
-    function addRow($tbl, text) {
-        $row = $("<tr><td></td></tr>").find("td").text(text).end();
+    function addRow($tbl, item1, item2) {
+        $row = $("<tr><td></td><td><td></tr>")
+            .find("td:first-child").text(item1).end()
+            .find("td:nth-child(2)").text(item2).end();
         $tbl.find("tbody").append($row);
     }
 
@@ -14,14 +16,15 @@ $(document).ready(function () {
 
         if (solutionData.solution != undefined) {
             var data = solutionData.solution;
-            var $tbl = $("<table class='plan'><thead><tr><th>Plan</th></tr></thead><tbody></tbody><tfoot><tr><td><a class='remove-plan' href='#'>Remove</a></td></tr></tfoot></table>");
+            var $tbl = $("<table class='plan'><thead><tr><th colspan='2'>Plan</th></tr></thead><tbody></tbody><tfoot><tr><td colspan='2'><a class='remove-plan' href='#'>Remove</a></td></tr></tfoot></table>");
             for (i in data) {
                 var row = data[i];
                 for (j in row) {
-                    addRow($tbl, row[j]);
+                    var person = row[j];
+                    addRow($tbl, person.name, person.friends);
                 }
                 if (i < data.length - 1) {
-                    addRow($tbl, "-");
+                    addRow($tbl, "-", "");
                 }
             }
             $("#plans").append($("<td></td>").append($tbl));

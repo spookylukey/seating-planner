@@ -65,7 +65,7 @@ def find_solution():
                                 exploration_steps=exploration_steps,
                                 )
 
-    return jsonify({'solution': normalise_plan(planning_data.plan_to_names(plan))})
+    return jsonify({'solution': normalise_plan(planning_data.plan_to_people(plan))})
 
 if __name__ == '__main__':
     app.run(debug=True)
