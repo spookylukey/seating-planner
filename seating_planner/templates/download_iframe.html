@@ -6,7 +6,7 @@
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
   </script>
   <body>
-    <form method="POST" action="{{ url_for('download_file') }}">
+    <form method="POST" action="/seating-planner{{ url_for('download_file') }}">
       <textarea name="data"></textarea>
       <input type="text" name="filename">
     </form>
