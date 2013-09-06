@@ -16,7 +16,7 @@ $(document).ready(function () {
 
         if (solutionData.solution != undefined) {
             var data = solutionData.solution;
-            var $tbl = $("<table class='plan'><thead><tr><th colspan='2'>Plan</th></tr></thead><tbody></tbody><tfoot><tr><td colspan='2'><a class='remove-plan' href='#'>Remove</a></td></tr></tfoot></table>");
+            var $tbl = $("<table class='plan'><thead><tr><th colspan='2'>Plan</th></tr></thead><tbody></tbody><tfoot><tr><td colspan='2'><a class='remove-plan' href='#'>Remove</a> <a class='save-plan' href='#'>Download</a></td></tr></tfoot></table>");
             for (i in data) {
                 var row = data[i];
                 for (j in row) {
@@ -99,6 +99,13 @@ $(document).ready(function () {
     $("#plans").on("click", ".remove-plan", function (ev) {
         ev.preventDefault();
         $(ev.target).closest("table").remove();
+    });
+
+    $("#plans").on("click", ".save-plan", function (ev) {
+        ev.preventDefault();
+        $tbl = $(ev.target).closest("table").clone();
+        $tbl.find("tfoot").remove();
+        downloadFile("<table>" + $tbl.html() + "</table>", "plan.html");
     });
 
 });

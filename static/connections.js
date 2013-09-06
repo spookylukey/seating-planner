@@ -33,6 +33,12 @@ function updateMatrixFromRaw (raw) {
     return true;
 }
 
+function downloadFile (data, name) {
+    $("#file-data-raw").val(data);
+    $("#file-name").val(name);
+    $('#download-container').append('<iframe height="1", width="1" frameborder="0" src="' + $SCRIPT_ROOT + '/download-form/"></iframe>');
+}
+
 $(document).ready(function () {
 
     var $tbl = $("#connections");
@@ -277,9 +283,7 @@ $(document).ready(function () {
             alert("There is no data entered yet");
             return;
         }
-        $("#file-data-raw").val(getRawConnectionsData());
-        $("#file-name").val("connections.txt");
-        $('#download-container').append('<iframe height="1", width="1" frameborder="0" src="' + $SCRIPT_ROOT + '/download-form/"></iframe>');
+        downloadFile(getRawConnectionsData(), "connections.txt")
     }
 
     function uploadConnections () {
