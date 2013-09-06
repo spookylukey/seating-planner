@@ -18,6 +18,7 @@ def index():
 def error(message):
     return jsonify({'error': message})
 
+
 @app.route('/find-solution/', methods=['POST'])
 def find_solution():
 
@@ -77,7 +78,7 @@ def find_solution():
 # Download and upload are just echoing back data that is there client side,
 # but this mechanism allows us to make use of:
 #
-# * file selection
+# * file selection and upload in the browser
 # * automatic saving of downloads in most browsers (using Content-Disposition)
 
 

@@ -167,6 +167,18 @@ def solve(names, connections, table_size, table_count,
           annealing_time=6,
           exploration_steps=100,
           ):
+    """
+    Given a list of names,
+    and a square matrix (list of list) defining connection strengths,
+    the table size,
+    and the maximum number of tables available,
+    attempt to find a seating arrangement.
+
+    Returns a PlanningData structure, which has some useful methods like
+    'plan_to_people', and a plan, which is a list of tables, where each table
+    is a list of people (represented by integers which are indexes into the names list).
+    """
+
     planning_data = PlanningData(names, connections, table_size, table_count)
     state = planning_data.get_initial_plan()
     annealer = Annealer(planning_data.energy, move)
