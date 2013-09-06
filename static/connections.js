@@ -30,8 +30,6 @@ function updateMatrixFromRaw () {
         }
         m.push(l);
     }
-    $("#connections-matrix-controls").show();
-    $("#connections-raw-controls").hide();
     connectionsMatrix.loadData(m);
     return true;
 }
@@ -310,21 +308,6 @@ $(document).ready(function () {
         if (removeNamesFromConnections(names)) {
             $("#names-to-remove").val('');
         }
-    });
-
-    $("#show-raw-connections").click(function () {
-        $("#connections-matrix-controls").hide();
-        $("#connections-raw").val(getRawConnectionsData());
-        $("#connections-raw-controls").show();
-    });
-
-    $("#hide-raw-connections").click(function () {
-        $("#connections-matrix-controls").show();
-        $("#connections-raw-controls").hide();
-    });
-
-    $("#update-matrix").click(function () {
-        updateMatrixFromRaw();
     });
 
     $("#download-connections").click(function (ev) {

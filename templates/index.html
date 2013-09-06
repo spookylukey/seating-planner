@@ -58,7 +58,7 @@
     </ul>
 
     <div id="connections-matrix-controls">
-      <h3>Matrix <input type="submit" id="show-raw-connections" value="Show raw connections data"></h3>
+      <h3>Matrix</h3>
 
       <div class="download-form">
         Download connection data:
@@ -68,7 +68,7 @@
 
 
       <div class="upload-form">
-        <form id="upload-form">
+        <form id="upload-form" method="POST">
           Upload connection data:
           <input type="file" id="upload-selector">
           <input type="submit" id="upload-connections" value="Upload">
@@ -114,11 +114,8 @@
       </table>
     </div>
 
-    <div id="connections-raw-controls" style="display: none;">
-      <h3>Data <input type="submit" id="hide-raw-connections" value="Hide raw data"></h3>
-      <textarea id="connections-raw" rows="20" cols="50">
-      </textarea>
-      <p><input type="submit" id="update-matrix" value="Update matrix"></p>
+    <div style="display: none;">
+      <textarea id="connections-raw" rows="20" cols="50"></textarea>
     </div>
 
     <h2>Parameters</h2>
