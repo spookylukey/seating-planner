@@ -89,7 +89,7 @@ def normalise_plan(plan):
 
 
 def empty(table):
-    return all(p is None for p in table)
+    return all(p == -1 for p in table)
 
 ### People who are coming, and information about connections
 
@@ -122,7 +122,7 @@ class PlanningData(object):
         # that we get empty tables at the end.
         total_places = self.TABLE_SIZE * self.TABLE_COUNT
 
-        people.extend([None] * (total_places - len(people)))
+        people.extend([-1] * (total_places - len(people)))
 
         s = self.TABLE_SIZE
         c = self.TABLE_COUNT
@@ -149,10 +149,10 @@ class PlanningData(object):
         return [[
                 dict(name=self.NAMES[p],
                      friends=sum(1 if self.CONNECTIONS[p][k] > 0 else 0
-                                 for k in table if k != p and k is not None)
+                                 for k in table if k != p and k != -1)
                      )
                 for p in table
-                if p is not None]
+                if p != -1]
                     for table in plan]
 
 
