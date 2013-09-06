@@ -68,6 +68,14 @@ def find_solution():
     return jsonify({'solution': normalise_plan(planning_data.plan_to_people(plan))})
 
 
+
+# Download and upload are just echoing back data that is there client side,
+# but this mechanism allows us to make use of:
+#
+# * file selection
+# * automatic saving of downloads in most browsers (using Content-Disposition)
+
+
 @app.route('/download-form/')
 def download_form():
     return render_template('download_iframe.html')
@@ -80,6 +88,14 @@ def download_connections():
                                  ])
     response.set_data(request.form.get('data'))
     return response
+
+
+@app.route('/upload-connections/', methods=['POST'])
+def upload_connections():
+    response = Response(mimetype="text/plain")
+    response.set_data(request.data)
+    return response
+
 
 if __name__ == '__main__':
     app.run(debug=True)

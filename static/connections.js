@@ -280,6 +280,20 @@ $(document).ready(function () {
         $('#download-container').append('<iframe height="1", width="1" frameborder="0" src="' + $SCRIPT_ROOT + '/download-form/"></iframe>');
     }
 
+    function uploadConnections () {
+        var xhr = new XMLHttpRequest();
+        var file = $("#upload-selector").get(0).files[0];
+        xhr.file = file;
+        xhr.onreadystatechange = function(e) {
+            if (this.readyState == 4) {
+                console.log(['xhr upload complete', e]);
+                $("#connections-raw").val(xhr.response);
+                updateMatrixFromRaw();
+            }
+        };
+        xhr.open('post', $SCRIPT_ROOT + "/upload-connections/", true);
+        xhr.send(file);
+    }
 
 
     // --- Wiring ---
@@ -313,8 +327,13 @@ $(document).ready(function () {
         updateMatrixFromRaw();
     });
 
-    $("#download-connections").click(function () {
+    $("#download-connections").click(function (ev) {
         downloadConnections();
+    });
+
+    $("#upload-connections").click(function (ev) {
+        ev.preventDefault();
+        uploadConnections();
     });
 
     function makeGroupUnique (group) {
