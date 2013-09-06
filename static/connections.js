@@ -274,6 +274,10 @@ $(document).ready(function () {
         // Need the download to happen inline, without leaving the page.  We
         // also need the data to come from the actually page.
         // So we embed an iframe with a self-submitting form
+        if (connectionsMatrix.getData().length < 2) {
+            alert("There is no data entered yet");
+            return;
+        }
         $("#connections-raw").val(getRawConnectionsData());
         $('#download-container').append('<iframe height="1", width="1" frameborder="0" src="' + $SCRIPT_ROOT + '/download-form/"></iframe>');
     }
@@ -281,6 +285,10 @@ $(document).ready(function () {
     function uploadConnections () {
         var xhr = new XMLHttpRequest();
         var file = $("#upload-selector").get(0).files[0];
+        if (file == undefined) {
+            alert("No file has been selected for upload.");
+            return;
+        }
         xhr.file = file;
         xhr.onreadystatechange = function(e) {
             if (this.readyState == 4) {
