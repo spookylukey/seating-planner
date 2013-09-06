@@ -69,17 +69,13 @@ def move(plan):
     # This modifies the plan in place.
 
     # Swap two people on two tables
-    t1 = random.choice(plan)
-    plan.remove(t1)
-    t2 = random.choice(plan)
-    plan.remove(t2)
-    p1 = random.choice(t1)
-    p2 = random.choice(t2)
+    t1 = plan.pop(random.randrange(0, len(plan)))
+    t2 = plan.pop(random.randrange(0, len(plan)))
 
-    t1.remove(p1)
+    p1 = t1.pop(random.randrange(0, len(t1)))
+    p2 = t2.pop(random.randrange(0, len(t2)))
+
     t1.append(p2)
-
-    t2.remove(p2)
     t2.append(p1)
 
     plan.append(t1)
