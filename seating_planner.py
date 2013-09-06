@@ -59,9 +59,6 @@ Lori
 # A Plan is a list of Tables.
 # A Table is a list of integers representing people
 
-Table = list
-Plan = list
-
 
 def seated_together(plan, table_num, j, k):
     t = plan[table_num]
@@ -91,7 +88,7 @@ def move(plan):
 
 
 def normalise_plan(plan):
-    return sorted((Table(sorted(table, key=lambda p: p['name'])) for table in plan),
+    return sorted([sorted(table, key=lambda p: p['name']) for table in plan],
                   key=lambda t: t[0]['name'])
 
 
@@ -133,7 +130,7 @@ class PlanningData(object):
 
         s = self.TABLE_SIZE
         c = self.TABLE_COUNT
-        return Plan(Table(people[i*s:(i+1)*s]) for i in range(c))
+        return [people[i*s:(i+1)*s] for i in range(c)]
 
     def energy(self, plan):
         val = sum(
@@ -153,14 +150,14 @@ class PlanningData(object):
         return self.MAX_ENERGY - val
 
     def plan_to_people(self, plan):
-        return Plan(Table(
+        return [[
                 dict(name=self.NAMES[p],
                      friends=sum(1 if self.CONNECTIONS[p][k] > 0 else 0
                                  for k in table if k != p and k is not None)
                      )
                 for p in table
-                if p is not None)
-                    for table in plan)
+                if p is not None]
+                    for table in plan]
 
 
 
