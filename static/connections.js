@@ -45,6 +45,11 @@ $(document).ready(function () {
                   top: []};
     var groupSuffices = ["left", "top"];
 
+    function resetGroups () {
+        groups.left = [];
+        groups.top = [];
+    }
+
     function afterChange (changes, source) {
         if (source == "edit" || source == "autofill") {
             var newChanges = [];
@@ -179,18 +184,22 @@ $(document).ready(function () {
     function addNamesToConnections (names) {
         var existingData = connectionsMatrix.getData();
         var newNames = names.slice();
-        for (i in newNames) {
+        for (var i in newNames) {
             if (newNames[i].match(/,/)) {
                 alert("Names must not contain the comma character");
-                return;
+                return false;
+            }
+            if (nameInConnections(newNames[i])) {
+                alert("Name '" + newNames[i] + "' is already in the matrix");
+                return false;
             }
         }
-        for (i in newNames) {
+        for (var i in newNames) {
             var newName = newNames[i];
 
             // Add a new row
             var templateRow = existingData[0].slice();
-            for (j in templateRow) {
+            for (var j in templateRow) {
                 if (j == 0) {
                     templateRow[j] = newName;
                 } else {
@@ -200,8 +209,8 @@ $(document).ready(function () {
             existingData.push(templateRow);
 
             // Add a new column. Have to add item to each row.
-            for (j in existingData) {
-                row = existingData[j];
+            for (var j in existingData) {
+                var row = existingData[j];
                 if (j == 0) {
                     row.push(newName);
                 } else {
@@ -211,12 +220,70 @@ $(document).ready(function () {
             var idx = existingData.length - 1;
             existingData[idx][idx] = "0";
         }
+        resetGroups();
         connectionsMatrix.loadData(existingData);
+        return true;
     };
+
+    function nameInConnections (name) {
+        var existingData = connectionsMatrix.getData();
+        for (var i in existingData) {
+            if (existingData[i][0] == name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function removeNamesFromConnections (names) {
+        var existingData = connectionsMatrix.getData();
+        var newNames = names.slice();
+
+        for (var i in newNames) {
+            var newName = newNames[i];
+            if (!nameInConnections(newName)) {
+                alert("Name '" + newName + "' is not in the matrix");
+                return false;
+            }
+        }
+
+        for (var i in newNames) {
+            var newName = newNames[i];
+            // Remove row
+            for (var j in existingData) {
+                var row = existingData[j];
+                if (row[0] == newName) {
+                    existingData.splice(j, 1);
+                    break;
+                }
+            }
+            // remove column
+            var headerRow = existingData[0];
+            var idx = headerRow.indexOf(newName);
+            for (var j in existingData) {
+                var row = existingData[j];
+                row.splice(idx, 1);
+            }
+        }
+        resetGroups();
+        connectionsMatrix.loadData(existingData);
+
+        return true;
+
+    }
 
     $("#add-names").click(function (ev) {
         var names = $("#names").val().trim().split(/\n/);
-        addNamesToConnections(names);
+        if (addNamesToConnections(names)) {
+            $('#names').val('');
+        }
+    });
+
+    $("#remove-names").click(function (ev) {
+        var names = $("#names-to-remove").val().trim().split(/\n/);
+        if (removeNamesFromConnections(names)) {
+            $("#names-to-remove").val('');
+        }
     });
 
     $("#show-raw-connections").click(function () {
