@@ -62,10 +62,13 @@ def find_solution():
         matrix.append(line)
 
     # Solve
-    planning_data, plan = solve(names, matrix, table_size, table_count,
-                                annealing_time=annealing_time,
-                                exploration_steps=exploration_steps,
-                                )
+    try:
+        planning_data, plan = solve(names, matrix, table_size, table_count,
+                                    annealing_time=annealing_time,
+                                    exploration_steps=exploration_steps,
+                                    )
+    except Exception as e:
+        return error("An error occurred trying to solve this matrix")
 
     return jsonify({'solution': normalise_plan(planning_data.plan_to_people(plan))})
 

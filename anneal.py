@@ -210,12 +210,19 @@ class Annealer:
         print 'Attempting automatic simulated anneal...'
         
         # Find an initial guess for temperature
+
+        # This can get in an infinite loop if the energy function always returns
+        # the same value, so we include a cut off
         T = 0.0
         E = self.energy(state)
-        while T == 0.0:
+        loops = 0
+        while T == 0.0 and loops < 10000:
             step += 1
+            loops += 1
             self.move(state)
             T = abs( self.energy(state) - E )
+        if T == 0.0:
+            raise Exception("Couldn't find initial temperature")
         
         print 'Exploring temperature landscape:'
         print ' Temperature        Energy    Accept   Improve     Elapsed'
