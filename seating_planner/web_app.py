@@ -3,6 +3,7 @@
 import re
 
 from flask import Flask, jsonify, render_template, request, Response
+from werkzeug.contrib.fixers import ProxyFix
 
 from seating_planner.solver import solve, normalise_plan
 
@@ -104,6 +105,21 @@ def upload_connections():
     response = Response(mimetype="text/plain")
     response.set_data(request.data)
     return response
+
+
+class ScriptRootFix(object):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        forwarded_uri = environ.get('HTTP_FORWARDED_REQUEST_URI', None)
+        path_info = environ['PATH_INFO']
+        if forwarded_uri != None and forwarded_uri != path_info:
+            path_remainder = forwarded_uri[:-len(path_info)]
+            environ['SCRIPT_NAME'] = path_remainder
+        return self.app(environ, start_response)
+
+app.wsgi_app = ScriptRootFix(ProxyFix(app.wsgi_app))
 
 
 if __name__ == '__main__':
