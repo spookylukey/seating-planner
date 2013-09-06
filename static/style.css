@@ -14,3 +14,11 @@ table.plan tfoot td {
 .plans-container {
     overflow-y: auto;
 }
+
+#connections-controls {
+    width: 100%;
+    border: 1px solid black;
+}
+#connections-controls td {
+    vertical-align: top;
+}

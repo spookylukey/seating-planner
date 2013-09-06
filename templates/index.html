@@ -46,14 +46,48 @@
     </ul>
 
     <div id="connections-matrix-controls">
-      <p><input type="submit" id="show-raw-connections" value="Show raw connections data"></p>
-      <h3>Matrix</h3>
-      <div id="connections" class="handsontable"></div>
+      <h3>Matrix <input type="submit" id="show-raw-connections" value="Show raw connections data"></h3>
+      <p>Using the matrix:</p>
+
+      <ul>
+        <li>The matrix is symmetrical. Edit one half and the other will be filled in automatically.</li>
+        <li>If you create a group, then values for all the people in the group will be edited together. Groups can be selected down the left, across the top, or both.</li>
+        <li>To enter that a group of people all know each other:
+          <ul>
+            <li>Clear any group on the left</li>
+            <li>Add all the people in the group on left</li>
+            <li>Choose 'mirror group' on the left to create the same group across the top</li>
+            <li>Edit one connection between two people, and all will be updated</li>
+          </ul>
+        </li>
+      </ul>
+
+      <table id="connections-controls">
+        <tr>
+          <td></td>
+          <td>Groups:
+            <input type="submit" value="Clear group" id="clear-group-top">
+            <input type="submit" value="Add to group" id="add-to-group-top">
+            <input type="submit" value="Remove from group" id="remove-from-group-top">
+            <input type="submit" value="Mirror group" id="mirror-group-top">
+          </td>
+        </tr>
+        <tr>
+          <td>Groups:<br/>
+            <input type="submit" value="Clear group" id="clear-group-left"><br/>
+            <input type="submit" value="Add to group" id="add-to-group-left"><br/>
+            <input type="submit" value="Remove from group" id="remove-from-group-left"><br/>
+            <input type="submit" value="Mirror group" id="mirror-group-left">
+          </td>
+          <td>
+            <div id="connections" class="handsontable"></div>
+          </td>
+        </tr>
+      </table>
     </div>
 
     <div id="connections-raw-controls" style="display: none;">
-      <p><input type="submit" id="hide-raw-connections" value="Hide raw data"></p>
-      <h3>Data</h3>
+      <h3>Data <input type="submit" id="hide-raw-connections" value="Hide raw data"></h3>
       <textarea id="connections-raw" rows="20" cols="50">
       </textarea>
       <p><input type="submit" id="update-matrix" value="Update matrix"></p>
