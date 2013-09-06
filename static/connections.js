@@ -278,6 +278,7 @@ $(document).ready(function () {
             return;
         }
         $("#file-data-raw").val(getRawConnectionsData());
+        $("#file-name").val("connections.txt");
         $('#download-container').append('<iframe height="1", width="1" frameborder="0" src="' + $SCRIPT_ROOT + '/download-form/"></iframe>');
     }
 

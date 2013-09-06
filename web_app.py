@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import re
+
 from flask import Flask, jsonify, render_template, request, Response
 
 from seating_planner import solve, normalise_plan
@@ -83,8 +85,12 @@ def download_form():
 
 @app.route('/download-file/', methods=['POST'])
 def download_file():
+    filename = request.form.get('filename', '')
+    re.subn("[^a-zA-Z0-9._]", "", filename)
+    if not filename:
+        filename = "file.txt"
     response = Response(mimetype="text/plain",
-                        headers=[("Content-Disposition", "attachment; filename=connections.txt"),
+                        headers=[("Content-Disposition", "attachment; filename=%s" % filename),
                                  ])
     response.set_data(request.form.get('data'))
     return response

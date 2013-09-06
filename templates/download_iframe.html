@@ -8,11 +8,13 @@
   <body>
     <form method="POST" action="{{ url_for('download_file') }}">
       <textarea name="data"></textarea>
+      <input type="text" name="filename">
     </form>
   </body>
   <script type="text/javascript">
     var data = $(window.parent.document).find("#file-data-raw").val();
     $('textarea').val(data);
+    $('input').val($(window.parent.document).find("#file-name").val());
     $('form').submit();
   </script>
 </html>
