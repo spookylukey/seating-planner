@@ -166,11 +166,12 @@ class PlanningData(object):
 
 
 
-def solve(names, connections, table_size, table_count):
+def solve(names, connections, table_size, table_count,
+          annealing_time=6):
     planning_data = PlanningData(names, connections, table_size, table_count)
     state = planning_data.get_initial_plan()
     annealer = Annealer(planning_data.energy, move)
-    schedule = annealer.auto(state, minutes=0.1, steps=100)
+    schedule = annealer.auto(state, minutes=annealing_time/60.0, steps=100)
     state, e = annealer.anneal(state,
                                schedule['tmax'], schedule['tmin'],
                                schedule['steps'], updates=6)

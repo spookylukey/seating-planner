@@ -60,6 +60,14 @@ $(document).ready(function () {
             return;
         }
 
+        var annealingTime = $('#annealing-time').val();
+        if (! annealingTime.match(/^\d+$/)) {
+            alert("Please enter an integer for annealing time.");
+            return;
+        }
+        annealingTime = parseInt(annealingTime, 10);
+
+
         $("#loading").show();
         $.ajax({
             url: $SCRIPT_ROOT + "/find-solution/",
@@ -67,6 +75,7 @@ $(document).ready(function () {
             type: 'POST',
             data: {
                 connections: getRawConnectionsData(),
+                annealingTime: annealingTime,
                 tableCount: tableCount,
                 tableSize: tableSize
             },
