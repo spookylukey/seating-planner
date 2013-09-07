@@ -5,7 +5,7 @@ import re
 from flask import Flask, jsonify, render_template, request, Response
 from werkzeug.contrib.fixers import ProxyFix
 
-from seating_planner.solver import solve, normalise_plan
+from seating_planner.solver import solve
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -65,14 +65,14 @@ def find_solution():
 
     # Solve
     try:
-        planning_data, plan = solve(names, matrix, table_size, table_count,
+        planning_helper, plan = solve(names, matrix, table_size, table_count,
                                     annealing_time=annealing_time,
                                     exploration_steps=exploration_steps,
                                     )
     except Exception as e:
         return error("An error occurred trying to solve this matrix")
 
-    return jsonify({'solution': normalise_plan(planning_data.plan_to_people(plan))})
+    return jsonify({'solution': planning_helper.plan_to_people(plan)})
 
 
 

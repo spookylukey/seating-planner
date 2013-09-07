@@ -60,36 +60,6 @@ Lori
 # A Table is a list of integers representing people
 
 
-def seated_together(plan, table_num, j, k):
-    t = plan[table_num]
-    return int(j in t and k in t)
-
-
-def move(plan):
-    # This modifies the plan in place.
-
-    # Swap two people on two tables
-    t1 = plan.pop(random.randrange(0, len(plan)))
-    t2 = plan.pop(random.randrange(0, len(plan)))
-
-    p1 = t1.pop(random.randrange(0, len(t1)))
-    p2 = t2.pop(random.randrange(0, len(t2)))
-
-    t1.append(p2)
-    t2.append(p1)
-
-    plan.append(t1)
-    plan.append(t2)
-
-    if p1 == -1 and p2 == -1:
-        # We just swapped two empty seats. Try again:
-        move(plan)
-
-
-def normalise_plan(plan):
-    return sorted([sorted(table, key=lambda p: p['name']) for table in plan],
-                  key=lambda t: t[0]['name'])
-
 
 def empty(table):
     return all(p == -1 for p in table)
@@ -100,7 +70,36 @@ MAX_CONNECTION = 50
 
 CONSERVE_TABLE_COEFFICIENT = 50
 
-class PlanningData(object):
+class PlanningHelper(object):
+    def __init__(self, names, connections):
+        self.NAMES = names
+        self.CONNECTIONS = connections
+
+
+    def plan_to_people(self, plan):
+        plan = [[
+                dict(name=self.NAMES[p],
+                     friends=sum(1 if self.CONNECTIONS[p][k] > 0 else 0
+                                 for k in table if k != p and k != -1)
+                     )
+                for p in table
+                if p != -1]
+                    for table in plan]
+
+        # Now sort. Assuming sensibly ordered input names, the best is to re-use
+        # that sorting.
+        sort_person_key = lambda p: self.NAMES.index(p['name'])
+
+        # Just sort tables alphabetically by the first person
+        sort_table_key = lambda t: t[0]['name']
+
+        for t in plan:
+            t.sort(key=sort_person_key)
+        plan.sort(key=sort_table_key)
+        return plan
+
+
+class AnnealHelper(object):
     def __init__(self, names, connections, table_size, table_count):
         self.NAMES = names
         self.CONNECTIONS = connections
@@ -134,9 +133,33 @@ class PlanningData(object):
         c = self.TABLE_COUNT
         return [people[i*s:(i+1)*s] for i in range(c)]
 
+    def move(self, plan):
+        # This modifies the plan in place.
+
+        # Swap two people on two tables
+        t1 = plan.pop(random.randrange(0, len(plan)))
+        t2 = plan.pop(random.randrange(0, len(plan)))
+
+        p1 = t1.pop(random.randrange(0, len(t1)))
+        p2 = t2.pop(random.randrange(0, len(t2)))
+
+        t1.append(p2)
+        t2.append(p1)
+
+        plan.append(t1)
+        plan.append(t2)
+
+        if p1 == -1 and p2 == -1:
+            # We just swapped two empty seats. Try again:
+            self.move(plan)
+
+    def seated_together(self, plan, table_num, j, k):
+        t = plan[table_num]
+        return int(j in t and k in t)
+
     def energy(self, plan):
         val = sum(
-            self.CONNECTIONS[j][k] * seated_together(plan, table_num, j, k)
+            self.CONNECTIONS[j][k] * self.seated_together(plan, table_num, j, k)
             for table_num in range(0, self.TABLE_COUNT)
             for j in range(0, self.PEOPLE_COUNT - 1)
             for k in range(j, self.PEOPLE_COUNT)
@@ -151,17 +174,6 @@ class PlanningData(object):
         # Negative, because annealing module finds minimum
         return self.MAX_ENERGY - val
 
-    def plan_to_people(self, plan):
-        return [[
-                dict(name=self.NAMES[p],
-                     friends=sum(1 if self.CONNECTIONS[p][k] > 0 else 0
-                                 for k in table if k != p and k != -1)
-                     )
-                for p in table
-                if p != -1]
-                    for table in plan]
-
-
 
 def solve(names, connections, table_size, table_count,
           annealing_time=6,
@@ -174,14 +186,15 @@ def solve(names, connections, table_size, table_count,
     and the maximum number of tables available,
     attempt to find a seating arrangement.
 
-    Returns a PlanningData structure, which has some useful methods like
+    Returns a PlanningHelper structure, which has some useful methods like
     'plan_to_people', and a plan, which is a list of tables, where each table
     is a list of people (represented by integers which are indexes into the names list).
     """
 
-    planning_data = PlanningData(names, connections, table_size, table_count)
-    state = planning_data.get_initial_plan()
-    annealer = Annealer(planning_data.energy, move)
+    anneal_helper = AnnealHelper(names, connections, table_size, table_count)
+    planning_helper = PlanningHelper(names, connections)
+    state = anneal_helper.get_initial_plan()
+    annealer = Annealer(anneal_helper.energy, anneal_helper.move)
     schedule = annealer.auto(state, seconds=annealing_time, steps=exploration_steps)
     state, e = annealer.anneal(state,
                                schedule['tmax'], schedule['tmin'],
@@ -189,9 +202,9 @@ def solve(names, connections, table_size, table_count,
 
     # Remove empty tables:
     state = [t for t in state if not empty(t)]
-    return planning_data, state
+    return planning_helper, state
 
 
 if __name__ == '__main__':
-    planning_data, plan = solve(EXAMPLE_NAMES, EXAMPLE_CONNECTIONS, 9, 2)
-    print normalise_plan(planning_data.plan_to_people(plan))
+    planning_helper, plan = solve(EXAMPLE_NAMES, EXAMPLE_CONNECTIONS, 9, 2)
+    print planning_helper.plan_to_people(plan)
